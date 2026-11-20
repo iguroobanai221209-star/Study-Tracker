@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<meta name="description" content="Personal Study Tracker">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<title>Study Tracker</title>
+<style>
+:root{--bg:#0b1220;--panel:#141f31;--panel2:#1b2940;--text:#eef4ff;--muted:#9aabc5;--accent:#79a9ff;--green:#52d6a0;--line:#293850;--danger:#ff7885}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top right,#1b3150 0,transparent 35%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;padding:env(safe-area-inset-top) 14px calc(22px + env(safe-area-inset-bottom));}
+.app{max-width:650px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;padding:22px 2px 16px}.eyebrow{color:var(--accent);font-size:12px;letter-spacing:1.4px;font-weight:800}.top h1{font-size:25px;margin:4px 0 0}.date{color:var(--muted);font-size:13px}.panel{background:linear-gradient(145deg,var(--panel),#111b2b);border:1px solid var(--line);border-radius:20px;padding:17px;margin:12px 0;box-shadow:0 12px 28px #0002}.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.section-title h2{font-size:17px;margin:0}.muted{color:var(--muted);font-size:13px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:var(--panel2);padding:13px 10px;border-radius:15px}.stat strong{font-size:22px;display:block}.stat span{font-size:11px;color:var(--muted)}.progress{height:9px;background:#26354b;border-radius:20px;overflow:hidden;margin:12px 0 6px}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--green));width:0%;border-radius:20px;transition:width .25s}.tabs{display:flex;gap:7px;overflow:auto;padding:5px 0 10px;position:sticky;top:0;background:#0b1220ee;z-index:2}.tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:9px 14px;border-radius:12px;white-space:nowrap;font-weight:700}.tab.active{background:var(--accent);color:#091321;border-color:var(--accent)}.view{display:none}.view.active{display:block}.field{width:100%;padding:12px 13px;border-radius:12px;border:1px solid var(--line);background:#0d1727;color:var(--text);font:inherit;outline:none}.field:focus{border-color:var(--accent)}.row{display:flex;gap:8px}.row>*{min-width:0;flex:1}.btn{border:0;border-radius:12px;padding:12px 14px;background:var(--accent);color:#071323;font-weight:800;font:inherit;cursor:pointer}.btn.secondary{background:#263750;color:var(--text);border:1px solid var(--line)}.btn.green{background:var(--green)}.btn.small{padding:8px 11px;font-size:13px}.list{display:grid;gap:8px}.item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#101b2c;border:1px solid var(--line);padding:12px;border-radius:13px}.item small{display:block;color:var(--muted);margin-top:3px}.item button{flex-shrink:0}.empty{text-align:center;color:var(--muted);padding:20px 5px}.timer{text-align:center;padding:12px 0}.clock{font-size:54px;font-weight:800;letter-spacing:1px;font-variant-numeric:tabular-nums;margin:12px 0}.timer-controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}.check{accent-color:var(--green);width:18px;height:18px}.taskdone{opacity:.55;text-decoration:line-through}.foot{text-align:center;color:#70819b;font-size:11px;padding:18px 0}.notice{font-size:12px;color:var(--muted);line-height:1.5}.hidden{display:none!important}
+</style>
+</head>
+<body><main class="app">
+<header class="top"><div><div class="eyebrow">YOUR PERSONAL SPACE</div><h1>Study Tracker 📚</h1><div class="date" id="today"></div></div><button class="btn secondary small" id="installBtn" hidden>Install</button></header>
+<section class="panel">
+ <div class="section-title"><h2>আজকের অগ্রগতি</h2><span class="muted" id="goalLabel">লক্ষ্য: ৩ ঘণ্টা</span></div>
+ <div class="stats">
+  <div class="stat"><strong id="todayHours">0m</strong><span>আজ পড়েছ</span></div>
+  <div class="stat"><strong id="todaySessions">0</strong><span>সেশন</span></div>
+  <div class="stat"><strong id="streak">0</strong><span>দিনের ধারাবাহিকতা</span></div>
+ </div>
+ <div class="progress"><i id="progressBar"></i></div><div class="muted" id="progressText">আজকের লক্ষ্যের ০%</div>
+</section>
+<nav class="tabs">
+ <button class="tab active" data-tab="home">হোম</button><button class="tab" data-tab="timer">স্টাডি টাইমার</button><button class="tab" data-tab="tasks">টাস্ক</button><button class="tab" data-tab="subjects">বিষয়</button><button class="tab" data-tab="settings">সেটিংস</button>
+</nav>
+<section class="view active" id="home">
+ <section class="panel"><div class="section-title"><h2>আজকের পড়াশোনা</h2><span class="muted">Daily summary</span></div><div id="recentList" class="list"><div class="empty">এখনো কোনো পড়ার সেশন নেই। টাইমার চালু করো!</div></div></section>
+ <section class="panel"><div class="section-title"><h2>আজকের কাজ</h2><span class="muted" id="taskCount">0টি বাকি</span></div><div id="homeTasks" class="list"><div class="empty">আজকের জন্য কোনো টাস্ক নেই।</div></div></section>
+</section>
+<section class="view" id="timer">
+ <section class="panel"><div class="section-title"><h2>ফোকাস সেশন</h2><span class="muted">মনোযোগ দিয়ে পড়ো</span></div>
+ <label class="muted">কোন বিষয় পড়বে?</label><select id="timerSubject" class="field" style="margin:7px 0 12px"><option value="">বিষয় নির্বাচন করো</option></select>
+ <div class="timer"><div class="muted">সময়</div><div class="clock" id="clock">25:00</div><div class="timer-controls"><button class="btn green" id="startTimer">Start</button><button class="btn secondary" id="pauseTimer">Pause</button><button class="btn secondary" id="resetTimer">Reset</button></div></div>
+ <div class="row" style="margin-top:14px"><button class="btn secondary" data-min="25">২৫ মিনিট</button><button class="btn secondary" data-min="50">৫০ মিনিট</button><button class="btn secondary" data-min="custom">নিজে ঠিক করো</button></div>
+ <p class="notice">টাইমার শেষ হলে সেশনটি স্বয়ংক্রিয়ভাবে আজকের পড়ার হিসাবে যোগ হবে।</p></section>
+</section>
+<section class="view" id="tasks">
+ <section class="panel"><div class="section-title"><h2>নতুন টাস্ক যোগ করো</h2></div><div class="row"><input id="taskInput" class="field" placeholder="যেমন: পদার্থবিজ্ঞান অধ্যায় ৩"><button class="btn" id="addTask">যোগ</button></div><div id="taskList" class="list" style="margin-top:13px"></div></section>
+</section>
+<section class="view" id="subjects">
+ <section class="panel"><div class="section-title"><h2>আমার বিষয়সমূহ</h2></div><div class="row"><input id="subjectInput" class="field" placeholder="নতুন বিষয়ের নাম"><button class="btn" id="addSubject">যোগ</button></div><div id="subjectList" class="list" style="margin-top:13px"></div></section>
+</section>
+<section class="view" id="settings">
+ <section class="panel"><div class="section-title"><h2>লক্ষ্য ও সেটিংস</h2></div><label class="muted">প্রতিদিনের পড়ার লক্ষ্য (মিনিট)</label><input id="goalInput" class="field" type="number" min="15" max="1440" value="180" style="margin:7px 0 12px"><button class="btn" id="saveGoal">লক্ষ্য সেভ করো</button><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><button class="btn secondary" id="exportData">ডেটা Export (Backup)</button><button class="btn secondary" id="importBtn" style="margin-left:6px">Import</button><input type="file" id="importFile" accept="application/json" class="hidden"><p class="notice">তোমার সব তথ্য এই ডিভাইসের ব্রাউজারে সেভ থাকে। ব্রাউজারের ডেটা মুছে ফেললে তথ্য হারাতে পারে—মাঝে মাঝে Backup রাখবে।</p></section>
+</section>
+<div class="foot">Made for your study journey · Data stays on this device</div>
+</main>
+<script>
+const KEY='studyTrackerDataV1';
+const todayKey=()=>new Date().toLocaleDateString('en-CA');
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||{goal:180,subjects:['বাংলা','ইংরেজি','গণিত','পদার্থবিজ্ঞান','রসায়ন','জীববিজ্ঞান'],tasks:[],sessions:[]};
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(data));render()};
+const mins=n=>{n=Math.max(0,Math.round(n));return n>=60?`${Math.floor(n/60)}h ${n%60}m`:`${n}m`};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+document.getElementById('today').textContent=new Date().toLocaleDateString('bn-BD',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+function render(){
+ const day=todayKey(), sessions=data.sessions.filter(x=>x.date===day), total=sessions.reduce((a,x)=>a+x.minutes,0),pct=Math.min(100,Math.round(total/data.goal*100));
+ document.getElementById('todayHours').textContent=mins(total);document.getElementById('todaySessions').textContent=sessions.length;
+ const days=[...new Set(data.sessions.map(x=>x.date))].sort().reverse();let streak=0,d=new Date();while(true){let k=d.toLocaleDateString('en-CA');if(days.includes(k)){streak++;d.setDate(d.getDate()-1)}else break}
+ document.getElementById('streak').textContent=streak;document.getElementById('goalLabel').textContent=`লক্ষ্য: ${mins(data.goal)}`;document.getElementById('progressBar').style.width=pct+'%';document.getElementById('progressText').textContent=`লক্ষ্যের ${pct}% পূরণ হয়েছে`;
+ const recent=document.getElementById('recentList');recent.innerHTML=sessions.length?sessions.slice().reverse().map(x=>`<div class="item"><div><b>${esc(x.subject||'অন্যান্য')}</b><small>${esc(x.time||'আজ')} · ${mins(x.minutes)}</small></div><span>✓</span></div>`).join(''):'<div class="empty">এখনো কোনো পড়ার সেশন নেই। টাইমার চালু করো!</div>';
+ const pending=data.tasks.filter(x=>!x.done);document.getElementById('taskCount').textContent=`${pending.length}টি বাকি`;
+ const tasksHTML=(arr)=>arr.length?arr.map(x=>`<div class="item"><label style="display:flex;align-items:center;gap:9px;min-width:0"><input class="check taskcheck" type="checkbox" data-id="${x.id}" ${x.done?'checked':''}><span class="${x.done?'taskdone':''}">${esc(x.text)}</span></label><button class="btn secondary small deltask" data-id="${x.id}">✕</button></div>`).join(''):'<div class="empty">আজকের জন্য কোনো টাস্ক নেই।</div>';
+ document.getElementById('homeTasks').innerHTML=tasksHTML(pending);document.getElementById('taskList').innerHTML=tasksHTML(data.tasks);
+ document.getElementById('subjectList').innerHTML=data.subjects.map((s,i)=>`<div class="item"><b>${esc(s)}</b><button class="btn secondary small delsubject" data-i="${i}">বাদ দাও</button></div>`).join('')||'<div class="empty">কোনো বিষয় যোগ করা হয়নি।</div>';
+ document.getElementById('timerSubject').innerHTML='<option value="">বিষয় নির্বাচন করো</option>'+data.subjects.map(s=>`<option>${esc(s)}</option>`).join('');
+ document.getElementById('goalInput').value=data.goal;
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.view').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active')});
+document.getElementById('addTask').onclick=()=>{let v=document.getElementById('taskInput').value.trim();if(v){data.tasks.push({id:Date.now(),text:v,done:false});document.getElementById('taskInput').value='';save()}};
+document.getElementById('taskInput').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('addTask').click()});
+document.getElementById('addSubject').onclick=()=>{let v=document.getElementById('subjectInput').value.trim();if(v&&!data.subjects.includes(v)){data.subjects.push(v);document.getElementById('subjectInput').value='';save()}};
+document.addEventListener('change',e=>{if(e.target.classList.contains('taskcheck')){let t=data.tasks.find(x=>x.id==e.target.dataset.id);if(t)t.done=e.target.checked;save()}});
+document.addEventListener('click',e=>{if(e.target.classList.contains('deltask')){data.tasks=data.tasks.filter(x=>x.id!=e.target.dataset.id);save()}if(e.target.classList.contains('delsubject')){data.subjects.splice(+e.target.dataset.i,1);save()}});
+document.getElementById('saveGoal').onclick=()=>{let v=+document.getElementById('goalInput').value;if(v>=15&&v<=1440){data.goal=v;save();alert('দৈনিক লক্ষ্য সেভ হয়েছে!')}};
+let duration=25*60,left=duration,interval=null;
+const showClock=()=>document.getElementById('clock').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+function stop(){clearInterval(interval);interval=null}
+function finish(){stop();let subject=document.getElementById('timerSubject').value||'অন্যান্য';data.sessions.push({date:todayKey(),minutes:Math.round(duration/60),subject,time:new Date().toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'})});left=duration;showClock();save();alert('দারুণ! তোমার পড়ার সেশন সেভ হয়েছে।')}
+document.getElementById('startTimer').onclick=()=>{if(interval)return;interval=setInterval(()=>{left--;showClock();if(left<=0)finish()},1000)};
+document.getElementById('pauseTimer').onclick=stop;
+document.getElementById('resetTimer').onclick=()=>{stop();left=duration;showClock()};
+document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{stop();let m=b.dataset.min==='custom'?Number(prompt('কত মিনিট পড়তে চাও?', '30')):Number(b.dataset.min);if(m>0&&m<=180){duration=m*60;left=duration;showClock()}});
+document.getElementById('exportData').onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='study-tracker-backup.json';a.click();URL.revokeObjectURL(a.href)};
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=async e=>{try{let x=JSON.parse(await e.target.files[0].text());if(x&&Array.isArray(x.sessions)&&Array.isArray(x.subjects)){data=x;save();alert('Backup import হয়েছে')}else alert('ফাইলটি সঠিক নয়')}catch{alert('ফাইল পড়া যায়নি')}};
+let installPrompt;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;document.getElementById('installBtn').hidden=false});
+document.getElementById('installBtn').onclick=async()=>{if(installPrompt){installPrompt.prompt();installPrompt=null}else alert('Chrome menu থেকে Add to Home screen নির্বাচন করো।')};
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
+render();showClock();
+</script></body></html>
